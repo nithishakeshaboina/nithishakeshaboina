@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Web Dev Combo Project</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f9f9f9;
+    }
+
+    header {
+      background: #004080;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .container {
+      padding: 20px;
+      max-width: 800px;
+      margin: auto;
+    }
+
+    section {
+      background: white;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      color: #004080;
+    }
+
+   
+    @media (max-width: 768px) {
+      header, section {
+        padding: 15px;
+      }
+
+      h2 {
+        font-size: 1.3rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      h2 {
+        font-size: 1.1rem;
+      }
+
+      button {
+        width: 100%;
+      }
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #007acc;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background-color: #005fa3;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Responsive Web Page with Quiz & API</h1>
+    <p>Try out the quiz and joke generator below!</p>
+  </header>
+
+  <div class="container">
+   
+    <section id="quiz-section">
+      <h2>📝 Interactive Quiz</h2>
+      <div class="question" id="question"></div>
+      <div id="options"></div>
+      <button onclick="nextQuestion()">Next</button>
+      <div id="result"></div>
+    </section>
+
+  
+    <section>
+      <h2>😂 Joke Generator (API)</h2>
+      <button onclick="getJoke()">Get a Joke</button>
+      <p id="joke"></p>
+    </section>
+  </div>
+
+  <script>
+   
+    const quizData = [
+      { q: "The length and breadth are increased by 15% and 25% respectively.What is the percentage increase in the area of rectangle", options: ["16%", "82%", "44%"], answer: "44%" },
+      { q: "2,12,36,80,150,__?", options: ["251", "252", "341"], answer: "252" },
+      { q: "What language is used for web styling?", options: ["Java", "CSS", "C++"], answer: "CSS" }
+     // { q: "The synonym of IMPLORE is?" , option: ["Punish","Exposure","Beg"], answer: "Beg" }
+    ];
+    let current = 0, score = 0;
+
+    function showQuestion() { 
+      const data = quizData[current];
+      document.getElementById("question").innerText = data.q;
+      document.getElementById("options").innerHTML = data.options.map(opt =>
+        `<label><input type="radio" name="opt" value="${opt}"> ${opt}</label><br>`
+      ).join("");
+    }
+
+    function nextQuestion() {
+      const selected = document.querySelector('input[name="opt"]:checked');
+      if (selected && selected.value === quizData[current].answer) score++;
+      current++;
+      if (current < quizData.length) {
+        showQuestion();
+      } else {
+        document.getElementById("quiz-section").innerHTML =
+          `<h2>🎉 Quiz Completed!</h2><p>Your score: ${score}/${quizData.length}</p>`;
+      }
+    }
+
+    showQuestion();
+    function getJoke() {
+      fetch("https://official-joke-api.appspot.com/random_joke")
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById("joke").innerText = `${data.setup} - ${data.punchline}`;
+        })
+        .catch(() => {
+          document.getElementById("joke").innerText = "Failed to load joke 😢";
+        });
+    }
+  </script>
+</body>
+</html>
